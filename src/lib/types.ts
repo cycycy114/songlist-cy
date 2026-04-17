@@ -1,0 +1,77 @@
+export const songStatusOptions = ['ready', 'learning', 'resting'] as const;
+export type SongStatus = (typeof songStatusOptions)[number];
+
+export const requestStatusOptions = ['pending', 'reviewing', 'planned', 'declined'] as const;
+export type RequestStatus = (typeof requestStatusOptions)[number];
+export type BackendMode = 'memory' | 'supabase';
+
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  language: string;
+  status: SongStatus;
+  tags: string[];
+  isPublic: boolean;
+}
+
+export interface SongRequest {
+  id: string;
+  songTitle: string;
+  artist: string;
+  message: string;
+  requesterName: string | null;
+  status: RequestStatus;
+  matchedSongId: string | null;
+  createdAt: string;
+}
+
+export interface StreamerProfile {
+  name: string;
+  tagline: string;
+  description: string;
+  accent: string;
+  platforms: Array<{
+    label: string;
+    href: string;
+  }>;
+}
+
+export interface CatalogStats {
+  totalSongs: number;
+  publicSongs: number;
+  pendingRequests: number;
+}
+
+export interface PublicCatalog {
+  streamer: StreamerProfile;
+  songs: Song[];
+  tags: string[];
+  languages: string[];
+  statuses: readonly SongStatus[];
+  stats: CatalogStats;
+  backendMode: BackendMode;
+}
+
+export interface AdminDashboardData {
+  streamer: StreamerProfile;
+  songs: Song[];
+  requests: SongRequest[];
+  tags: string[];
+  languages: string[];
+  overview: CatalogStats;
+  backendMode: BackendMode;
+}
+
+export const songStatusLabels: Record<SongStatus, string> = {
+  ready: '可唱',
+  learning: '学习中',
+  resting: '暂不开放'
+};
+
+export const requestStatusLabels: Record<RequestStatus, string> = {
+  pending: '待处理',
+  reviewing: '评估中',
+  planned: '已加入计划',
+  declined: '暂不考虑'
+};
