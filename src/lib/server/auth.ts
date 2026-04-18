@@ -12,9 +12,19 @@ const sessionMaxAgeSeconds = 60 * 60 * 24 * 7;
 
 type AuthMode = 'demo' | 'supabase';
 
+const isProduction = () => privateEnv.NODE_ENV === 'production';
+
+const isDemoAuthEnabled = () => !isProduction() || privateEnv.ENABLE_DEMO_AUTH === 'true';
+
+const requireDemoAuthEnabled = () => {
+  if (!isDemoAuthEnabled()) {
+    throw new Error('Demo admin auth is disabled. Configure Supabase auth or set ENABLE_DEMO_AUTH=true.');
+  }
+};
+
 const getAuthSecret = () => {
   if (!privateEnv.AUTH_SECRET || privateEnv.AUTH_SECRET === 'replace-me') {
-    if (privateEnv.NODE_ENV === 'production') {
+    if (isProduction()) {
       throw new Error('AUTH_SECRET must be configured in production.');
     }
 
@@ -39,19 +49,30 @@ const hasSupabaseAuth = () =>
       privateEnv.SUPABASE_SERVICE_ROLE_KEY
   );
 
-export const getAuthMode = (): AuthMode => (hasSupabaseAuth() ? 'supabase' : 'demo');
+export const getAuthMode = (): AuthMode => {
+  if (hasSupabaseAuth()) {
+    return 'supabase';
+  }
 
-export const getDemoCredentials = () => ({
-  email: privateEnv.ADMIN_EMAIL || defaultAdminEmail,
-  password: privateEnv.ADMIN_PASSWORD || defaultAdminPassword
-});
+  requireDemoAuthEnabled();
+  return 'demo';
+};
+
+export const getDemoCredentials = () => {
+  requireDemoAuthEnabled();
+
+  return {
+    email: privateEnv.ADMIN_EMAIL || defaultAdminEmail,
+    password: privateEnv.ADMIN_PASSWORD || defaultAdminPassword
+  };
+};
 
 export const setAdminSession = (cookies: Cookies) => {
   cookies.set(sessionCookieName, buildCookieValue(), {
     path: '/',
     httpOnly: true,
     sameSite: 'lax',
-    secure: privateEnv.NODE_ENV === 'production',
+    secure: isProduction(),
     maxAge: sessionMaxAgeSeconds
   });
 };

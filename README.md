@@ -29,11 +29,14 @@ npm run dev
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
 - `AUTH_SECRET`
+- `ENABLE_DEMO_AUTH`
 
-未配置 Supabase 时，后台登录会使用演示账号：
+未配置 Supabase 时，非生产环境会使用演示账号：
 
 - 邮箱：`admin@example.com`
 - 密码：`demo-admin`
+
+生产环境必须配置 Supabase 鉴权；只有临时演示部署才应显式设置 `ENABLE_DEMO_AUTH=true`。
 
 ## Supabase
 
