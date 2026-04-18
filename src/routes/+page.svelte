@@ -66,16 +66,10 @@
         />
         <div class="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/40"></div>
 
-        <div class="relative flex h-full min-h-[280px] flex-col justify-between p-6 lg:min-h-[360px] lg:p-10">
+        <div class="relative flex h-full min-h-[420px] flex-col justify-between gap-8 p-6 lg:min-h-[540px] lg:p-10">
           <div class="flex flex-wrap items-center gap-3">
             <span class={`inline-flex rounded-full px-4 py-1 text-sm font-semibold text-white ${data.catalog.streamer.accent}`}>
               {data.catalog.streamer.name}
-            </span>
-            <span class="rounded-full border border-[#e6e6e6] bg-white/85 px-3 py-1 text-xs text-[#62666d]">
-              {data.catalog.stats.publicSongs} 首公开曲目
-            </span>
-            <span class="rounded-full border border-[#e6e6e6] bg-white/85 px-3 py-1 text-xs text-[#62666d]">
-              {data.catalog.stats.pendingRequests} 条待处理愿望
             </span>
             {#if data.catalog.backendMode === 'memory'}
               <span class="rounded-full border border-[#d0d6e0] bg-[#f5f6f7] px-3 py-1 text-xs text-[#62666d]">
@@ -93,17 +87,39 @@
             </p>
           </div>
 
-          <div class="grid gap-3 sm:grid-cols-3">
-            {#each data.catalog.streamer.platforms as platform}
-              <a
-                href={platform.href}
-                target="_blank"
-                rel="noreferrer"
-                class="rounded-[18px] border border-[#e6e6e6] bg-white/90 px-4 py-3 text-sm font-medium text-[#191a1b] shadow-sm transition hover:border-[#d0d6e0] hover:bg-[#f5f6f7] hover:text-[#5e6ad2]"
-              >
-                前往 {platform.label}
-              </a>
-            {/each}
+          <div class="space-y-4">
+            <div class="grid gap-3 sm:grid-cols-3">
+              <div class="rounded-[24px] border border-[#e6e6e6] bg-white/90 p-4 shadow-sm backdrop-blur">
+                <p class="text-xs font-medium uppercase tracking-[0.14em] text-[#8a8f98]">公开曲目</p>
+                <p class="mt-3 text-3xl font-semibold text-[#191a1b]">{data.catalog.stats.publicSongs}</p>
+                <p class="mt-1 text-xs text-[#62666d]">首可浏览歌曲</p>
+              </div>
+
+              <div class="rounded-[24px] border border-[#e6e6e6] bg-white/90 p-4 shadow-sm backdrop-blur">
+                <p class="text-xs font-medium uppercase tracking-[0.14em] text-[#8a8f98]">待处理曲目</p>
+                <p class="mt-3 text-3xl font-semibold text-[#191a1b]">{data.catalog.stats.pendingRequests}</p>
+                <p class="mt-1 text-xs text-[#62666d]">条愿望单请求</p>
+              </div>
+
+              <div class="rounded-[24px] border border-[#e6e6e6] bg-white/90 p-4 shadow-sm backdrop-blur">
+                <p class="text-xs font-medium uppercase tracking-[0.14em] text-[#8a8f98]">标签总览</p>
+                <p class="mt-3 text-3xl font-semibold text-[#191a1b]">{data.catalog.tags.length}</p>
+                <p class="mt-1 text-xs text-[#62666d]">个筛选标签</p>
+              </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-3">
+              {#each data.catalog.streamer.platforms as platform}
+                <a
+                  href={platform.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="rounded-[18px] border border-[#e6e6e6] bg-white/90 px-4 py-3 text-sm font-medium text-[#191a1b] shadow-sm transition hover:border-[#d0d6e0] hover:bg-[#f5f6f7] hover:text-[#5e6ad2]"
+                >
+                  前往 {platform.label}
+                </a>
+              {/each}
+            </div>
           </div>
         </div>
       </div>
