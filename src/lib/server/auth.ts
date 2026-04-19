@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
+import { dev } from '$app/environment';
 import { env as privateEnv } from '$env/dynamic/private';
 import { getSupabaseConfig } from '$lib/server/env';
 import { createClient } from '@supabase/supabase-js';
@@ -8,11 +9,9 @@ import type { Cookies } from '@sveltejs/kit';
 const sessionCookieName = 'songboard_admin_session';
 const sessionMaxAgeSeconds = 60 * 60 * 24 * 7;
 
-const isProduction = () => privateEnv.NODE_ENV === 'production';
-
 const getAuthSecret = () => {
   if (!privateEnv.AUTH_SECRET || privateEnv.AUTH_SECRET === 'replace-me') {
-    if (isProduction()) {
+    if (!dev) {
       throw new Error('AUTH_SECRET must be configured in production.');
     }
 
@@ -43,7 +42,7 @@ export const setAdminSession = (cookies: Cookies) => {
     path: '/',
     httpOnly: true,
     sameSite: 'lax',
-    secure: isProduction(),
+    secure: !dev,
     maxAge: sessionMaxAgeSeconds
   });
 };
