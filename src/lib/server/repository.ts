@@ -110,10 +110,13 @@ const mapRequestRow = (row: RequestRow): SongRequest => ({
   createdAt: row.created_at
 });
 
-const buildStats = (songs: Song[], requests: SongRequest[]): CatalogStats => ({
+const countPendingRequests = (requests: SongRequest[]) =>
+  requests.filter((item) => item.status === 'pending').length;
+
+const buildStats = (songs: Song[], pendingRequests: number): CatalogStats => ({
   totalSongs: songs.length,
   publicSongs: songs.filter((song) => song.isPublic).length,
-  pendingRequests: requests.filter((item) => item.status === 'pending').length
+  pendingRequests
 });
 
 const buildCatalogMetadata = (songs: Song[]) => ({
@@ -159,9 +162,28 @@ const listRequests = async (): Promise<SongRequest[]> => {
   return ((data as RequestRow[] | null) ?? []).map(mapRequestRow);
 };
 
+const getPendingRequestCount = async (): Promise<number> => {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    return countPendingRequests(memoryStore.requests);
+  }
+
+  const { count, error } = await supabase
+    .from('requests')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
+  if (error) {
+    throw error;
+  }
+
+  return count ?? 0;
+};
+
 export const getPublicCatalog = async (): Promise<PublicCatalog> => {
   const songs = (await listSongs()).filter((song) => song.isPublic);
-  const requests = await listRequests();
+  const pendingRequests = await getPendingRequestCount();
   const metadata = buildCatalogMetadata(songs);
 
   return {
@@ -170,7 +192,7 @@ export const getPublicCatalog = async (): Promise<PublicCatalog> => {
     tags: metadata.tags,
     languages: metadata.languages,
     statuses: songStatusOptions,
-    stats: buildStats(songs, requests),
+    stats: buildStats(songs, pendingRequests),
     backendMode: getBackendMode()
   };
 };
@@ -186,7 +208,7 @@ export const getAdminDashboardData = async (): Promise<AdminDashboardData> => {
     requests,
     tags: metadata.tags,
     languages: metadata.languages,
-    overview: buildStats(songs, requests),
+    overview: buildStats(songs, countPendingRequests(requests)),
     backendMode: getBackendMode()
   };
 };
