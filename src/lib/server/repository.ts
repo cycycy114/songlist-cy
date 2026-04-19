@@ -46,15 +46,6 @@ type RequestRow = {
 
 const sortStrings = (values: Iterable<string>) => Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 
-const cloneSong = (song: Song): Song => ({
-  ...song,
-  tags: [...song.tags]
-});
-
-const cloneRequest = (item: SongRequest): SongRequest => ({
-  ...item
-});
-
 const parseSongStatus = (status: string): SongStatus => {
   if (songStatusOptions.includes(status as SongStatus)) {
     return status as SongStatus;
@@ -128,7 +119,7 @@ const listSongs = async (): Promise<Song[]> => {
   const supabase = getSupabaseAdmin();
 
   if (!supabase) {
-    return memoryStore.songs.map(cloneSong);
+    return memoryStore.songs;
   }
 
   const { data, error } = await supabase
@@ -147,7 +138,7 @@ const listRequests = async (): Promise<SongRequest[]> => {
   const supabase = getSupabaseAdmin();
 
   if (!supabase) {
-    return memoryStore.requests.map(cloneRequest).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    return [...memoryStore.requests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
   const { data, error } = await supabase
