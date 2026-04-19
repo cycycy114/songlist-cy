@@ -110,7 +110,7 @@ export const loginAdmin = async ({
   }
 
   const supabaseConfig = getSupabaseConfig();
-  const client = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+  const client = createClient(supabaseConfig.url, supabaseConfig.publishableKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false
