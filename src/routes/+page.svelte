@@ -263,83 +263,59 @@
       </div>
     </aside>
 
-    <div class="space-y-4">
-      <div class="hidden overflow-hidden rounded-[28px] border border-[#e6e6e6] bg-white shadow-sm lg:block">
-        <div class="grid grid-cols-[minmax(0,2fr)_minmax(0,1.6fr)_120px_140px_1.7fr] gap-4 border-b border-[#e6e6e6] bg-[#f5f6f7] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#8a8f98]">
-          <div>歌曲名</div>
-          <div>原唱</div>
-          <div>语言</div>
-          <div>当前状态</div>
-          <div>标签</div>
-        </div>
+    <div class="overflow-hidden rounded-[28px] border border-[#e6e6e6] bg-white shadow-sm">
+      <div class="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.6fr)_120px_140px_1.7fr] gap-4 border-b border-[#e6e6e6] bg-[#f5f6f7] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#8a8f98] lg:grid">
+        <div>歌曲名</div>
+        <div>原唱</div>
+        <div>语言</div>
+        <div>当前状态</div>
+        <div>标签</div>
+      </div>
 
-        {#if filteredSongs.length > 0}
-          {#each filteredSongs as song, index}
-            <div class={`grid grid-cols-[minmax(0,2fr)_minmax(0,1.6fr)_120px_140px_1.7fr] gap-4 px-6 py-5 ${index !== filteredSongs.length - 1 ? 'border-b border-[#e6e6e6]' : ''}`}>
-              <div>
-                <p class="text-base font-semibold text-[#191a1b]">{song.title}</p>
+      {#if filteredSongs.length > 0}
+        <div class="divide-y divide-[#e6e6e6]">
+          {#each filteredSongs as song}
+            <article class="grid gap-4 p-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.6fr)_120px_140px_1.7fr] lg:items-center lg:px-6">
+              <div class="min-w-0">
+                <p class="text-xs uppercase tracking-[0.14em] text-[#8a8f98] lg:hidden">歌曲名</p>
+                <h3 class="mt-1 break-words text-lg font-semibold text-[#191a1b] lg:mt-0 lg:text-base">{song.title}</h3>
               </div>
-              <div class="text-sm text-[#62666d]">{song.artist}</div>
-              <div class="text-sm text-[#62666d]">{song.language}</div>
+
+              <div class="min-w-0 text-sm text-[#62666d]">
+                <p class="text-xs uppercase tracking-[0.14em] text-[#8a8f98] lg:hidden">原唱</p>
+                <p class="mt-1 truncate lg:mt-0">{song.artist}</p>
+              </div>
+
+              <div class="text-sm text-[#62666d]">
+                <p class="text-xs uppercase tracking-[0.14em] text-[#8a8f98] lg:hidden">语言</p>
+                <p class="mt-1 lg:mt-0">{song.language}</p>
+              </div>
+
               <div>
+                <p class="mb-2 text-xs uppercase tracking-[0.14em] text-[#8a8f98] lg:hidden">当前状态</p>
                 <span class={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusClass(song.status)}`}>
                   {songStatusLabels[song.status]}
                 </span>
               </div>
-              <div class="flex flex-wrap gap-2">
-                {#each song.tags as tag}
-                  <span class="rounded-full border border-[#d0d6e0] bg-[#f5f6f7] px-3 py-1 text-xs text-[#62666d]">
-                    {tag}
-                  </span>
-                {/each}
-              </div>
-            </div>
-          {/each}
-        {:else}
-          <div class="px-6 py-16 text-center text-sm text-[#8a8f98]">
-            当前筛选下没有结果，试试放宽关键词或筛选项。
-          </div>
-        {/if}
-      </div>
 
-      <div class="grid gap-4 lg:hidden">
-        {#if filteredSongs.length > 0}
-          {#each filteredSongs as song}
-            <article class="rounded-[24px] border border-[#e6e6e6] bg-white p-5 shadow-sm">
-              <div class="flex items-start justify-between gap-4">
-                <div class="min-w-0">
-                  <h3 class="break-words text-lg font-semibold text-[#191a1b]">{song.title}</h3>
-                  <p class="mt-1 text-sm text-[#62666d]">{song.artist}</p>
-                </div>
-                <span class={`inline-flex shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${statusClass(song.status)}`}>
-                  {songStatusLabels[song.status]}
-                </span>
-              </div>
-
-              <div class="mt-4 grid gap-3 text-sm text-[#62666d] sm:grid-cols-2">
-                <div>
-                  <p class="text-xs uppercase tracking-[0.14em] text-[#8a8f98]">语言</p>
-                  <p class="mt-1">{song.language}</p>
-                </div>
-                <div>
-                  <p class="text-xs uppercase tracking-[0.14em] text-[#8a8f98]">标签</p>
-                  <div class="mt-2 flex flex-wrap gap-2">
-                    {#each song.tags as tag}
-                      <span class="rounded-full border border-[#d0d6e0] bg-[#f5f6f7] px-3 py-1 text-xs text-[#62666d]">
-                        {tag}
-                      </span>
-                    {/each}
-                  </div>
+              <div>
+                <p class="mb-2 text-xs uppercase tracking-[0.14em] text-[#8a8f98] lg:hidden">标签</p>
+                <div class="flex flex-wrap gap-2">
+                  {#each song.tags as tag}
+                    <span class="rounded-full border border-[#d0d6e0] bg-[#f5f6f7] px-3 py-1 text-xs text-[#62666d]">
+                      {tag}
+                    </span>
+                  {/each}
                 </div>
               </div>
             </article>
           {/each}
-        {:else}
-          <div class="rounded-[24px] border border-dashed border-[#d0d6e0] bg-white/80 px-4 py-12 text-center text-sm text-[#8a8f98]">
-            当前筛选下没有歌曲。
-          </div>
-        {/if}
-      </div>
+        </div>
+      {:else}
+        <div class="px-6 py-16 text-center text-sm text-[#8a8f98]">
+          当前筛选下没有结果，试试放宽关键词或筛选项。
+        </div>
+      {/if}
     </div>
   </section>
 </div>
