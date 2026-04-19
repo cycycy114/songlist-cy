@@ -109,13 +109,6 @@ export const loginAdmin = async ({
     };
   }
 
-  if (normalizedEmail !== getAdminEmail().trim().toLowerCase()) {
-    return {
-      ok: false,
-      message: '该账号不是管理员账号。'
-    };
-  }
-
   const supabaseConfig = getSupabaseConfig();
   const client = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
     auth: {
@@ -129,10 +122,12 @@ export const loginAdmin = async ({
     password: normalizedPassword
   });
 
-  if (error) {
+  const isAdminEmail = normalizedEmail === getAdminEmail().trim().toLowerCase();
+
+  if (error || !isAdminEmail) {
     return {
       ok: false,
-      message: error.message || '管理员登录失败。'
+      message: '邮箱或密码错误。'
     };
   }
 
