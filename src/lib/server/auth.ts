@@ -34,6 +34,8 @@ const getAuthSecret = () => {
   return privateEnv.AUTH_SECRET;
 };
 
+const getAdminEmail = () => privateEnv.ADMIN_EMAIL || defaultAdminEmail;
+
 const signValue = (value: string) => createHmac('sha256', getAuthSecret()).update(value).digest('hex');
 
 const buildCookieValue = () => {
@@ -62,7 +64,7 @@ export const getDemoCredentials = () => {
   requireDemoAuthEnabled();
 
   return {
-    email: privateEnv.ADMIN_EMAIL || defaultAdminEmail,
+    email: getAdminEmail(),
     password: privateEnv.ADMIN_PASSWORD || defaultAdminPassword
   };
 };
@@ -147,7 +149,7 @@ export const loginAdmin = async ({
   }
 
   if (hasSupabaseAuth()) {
-    const adminEmail = getDemoCredentials().email.toLowerCase();
+    const adminEmail = getAdminEmail().toLowerCase();
 
     if (normalizedEmail !== adminEmail) {
       return {
