@@ -29,7 +29,7 @@ type SongRow = {
   artist: string;
   language: string;
   status: string;
-  tags: string[] | null;
+  tags: string[];
   is_public: boolean;
 };
 
@@ -95,7 +95,7 @@ const mapSongRow = (row: SongRow): Song => ({
   artist: row.artist,
   language: row.language,
   status: parseSongStatus(row.status),
-  tags: row.tags ?? [],
+  tags: row.tags,
   isPublic: row.is_public
 });
 
