@@ -213,6 +213,46 @@ export const createSongRequest = async ({
   return payload;
 };
 
+export const importSongs = async (
+  songs: Array<{
+    title: string;
+    artist: string;
+    language: string;
+    status: SongStatus;
+    tags: string[];
+    isPublic: boolean;
+  }>
+) => {
+  const payloads: Song[] = songs.map((song) => ({
+    id: randomUUID(),
+    title: song.title,
+    artist: song.artist,
+    language: song.language,
+    status: song.status,
+    tags: sortStrings(song.tags),
+    isPublic: song.isPublic
+  }));
+  const supabase = getSupabaseAdmin();
+
+  const { error } = await supabase.from('songs').insert(
+    payloads.map((song) => ({
+      id: song.id,
+      title: song.title,
+      artist: song.artist,
+      language: song.language,
+      status: song.status,
+      tags: song.tags,
+      is_public: song.isPublic
+    }))
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return payloads;
+};
+
 export const saveSong = async ({
   id,
   title,

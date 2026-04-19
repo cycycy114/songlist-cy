@@ -167,6 +167,105 @@
           保存歌曲
         </button>
       </form>
+
+      <div class="mt-8 border-t border-[#e6e6e6] pt-7">
+        <div>
+          <p class="text-sm font-medium text-[#5e6ad2]">导入网易云</p>
+          <h2 class="mt-1 text-2xl font-semibold text-[#191a1b]">公开歌单导入</h2>
+        </div>
+
+        <form method="POST" action="?/previewPlaylist" class="mt-6 space-y-4">
+          <label class="block space-y-2 text-sm text-[#62666d]">
+            <span>歌单链接或 ID</span>
+            <input name="playlistInput" class="form-field" placeholder="https://music.163.com/#/playlist?id=..." />
+          </label>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block space-y-2 text-sm text-[#62666d]">
+              <span>语言</span>
+              <input name="language" class="form-field" value="中文" />
+            </label>
+
+            <label class="block space-y-2 text-sm text-[#62666d]">
+              <span>状态</span>
+              <select name="status" class="form-field">
+                {#each songStatusOptions as status}
+                  <option value={status} selected={status === 'ready'}>{songStatusLabels[status]}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+
+          <label class="block space-y-2 text-sm text-[#62666d]">
+            <span>标签（逗号分隔）</span>
+            <input name="tagsInput" class="form-field" placeholder="例如：网易云导入" />
+          </label>
+
+          <button
+            type="submit"
+            class="inline-flex w-full items-center justify-center rounded-[18px] border border-[#5e6ad2] px-5 py-3 text-sm font-semibold text-[#5e6ad2] transition hover:bg-[#5e6ad2] hover:text-white"
+          >
+            解析歌单
+          </button>
+        </form>
+
+        {#if form?.playlistPreview}
+          <form method="POST" action="?/importPlaylist" class="mt-6 space-y-4">
+            <input type="hidden" name="playlistInput" value={form.playlistPreview.playlistInput} />
+            <input type="hidden" name="language" value={form.playlistPreview.language} />
+            <input type="hidden" name="status" value={form.playlistPreview.status} />
+            <input type="hidden" name="tagsInput" value={form.playlistPreview.tagsInput} />
+            <input type="hidden" name="songCount" value={form.playlistPreview.songs.length} />
+
+            <div class="rounded-[18px] border border-[#e6e6e6] bg-[#f5f6f7] px-4 py-3 text-sm text-[#62666d]">
+              <p>
+                {form.playlistPreview.songs.length} 首待确认 · {form.playlistPreview.language} · {songStatusLabels[form.playlistPreview.status]}
+              </p>
+              {#if form.playlistPreview.tagsInput}
+                <p class="mt-1 text-xs text-[#8a8f98]">标签：{form.playlistPreview.tagsInput}</p>
+              {/if}
+            </div>
+
+            <div class="max-h-[420px] overflow-auto rounded-[18px] border border-[#e6e6e6]">
+              <table class="w-full min-w-[360px] text-left text-sm">
+                <thead class="sticky top-0 bg-white text-xs uppercase tracking-[0.12em] text-[#8a8f98]">
+                  <tr>
+                    <th class="w-12 px-3 py-3">选</th>
+                    <th class="px-3 py-3">歌曲</th>
+                    <th class="px-3 py-3">原唱</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e6e6e6] bg-white">
+                  {#each form.playlistPreview.songs as song, index}
+                    <tr>
+                      <td class="px-3 py-3 align-top">
+                        <input
+                          name="selectedSong"
+                          type="checkbox"
+                          value={index}
+                          class="h-4 w-4 rounded border-[#d0d6e0] accent-[#5e6ad2]"
+                          checked
+                        />
+                        <input type="hidden" name={`songTitle-${index}`} value={song.title} />
+                        <input type="hidden" name={`songArtist-${index}`} value={song.artist} />
+                      </td>
+                      <td class="px-3 py-3 text-[#191a1b]">{song.title}</td>
+                      <td class="px-3 py-3 text-[#62666d]">{song.artist}</td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
+
+            <button
+              type="submit"
+              class="inline-flex w-full items-center justify-center rounded-[18px] bg-[#5e6ad2] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#828fff]"
+            >
+              导入勾选歌曲
+            </button>
+          </form>
+        {/if}
+      </div>
     </div>
 
     <div class="space-y-6">
