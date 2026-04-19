@@ -1,11 +1,10 @@
 import { fail } from '@sveltejs/kit';
 
+import { readText } from '$lib/server/form-utils';
 import { createSongRequest, getPublicCatalog } from '$lib/server/repository';
 import { requestSchema } from '$lib/validators';
 
 import type { Actions, PageServerLoad } from './$types';
-
-const readText = (value: FormDataEntryValue | null) => (typeof value === 'string' ? value : '');
 const requestWindowMs = 10 * 60 * 1000;
 const maxRequestsPerWindow = 5;
 const requestBuckets = new Map<string, { count: number; resetAt: number }>();

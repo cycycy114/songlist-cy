@@ -1,10 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 
 import { loginAdmin, setAdminSession } from '$lib/server/auth';
+import { readText } from '$lib/server/form-utils';
 
 import type { Actions } from './$types';
-
-const readText = (value: FormDataEntryValue | null) => (typeof value === 'string' ? value : '');
 
 export const actions: Actions = {
   default: async ({ request, cookies }) => {

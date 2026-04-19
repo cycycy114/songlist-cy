@@ -1,17 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit';
 
 import { clearAdminSession } from '$lib/server/auth';
+import { readText } from '$lib/server/form-utils';
 import {
-  deleteSong as removeSong,
-  getAdminDashboardData,
-  saveSong,
-  updateRequestStatus
+	deleteSong as removeSong,
+	getAdminDashboardData,
+	saveSong,
+	updateRequestStatus
 } from '$lib/server/repository';
 import { requestStatusSchema, songSchema } from '$lib/validators';
 
 import type { Actions, PageServerLoad } from './$types';
 
-const readText = (value: FormDataEntryValue | null) => (typeof value === 'string' ? value : '');
 const readBoolean = (value: FormDataEntryValue | null) => value === 'on';
 
 export const load: PageServerLoad = async () => ({
