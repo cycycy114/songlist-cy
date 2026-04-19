@@ -1,15 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
-import { env as privateEnv } from '$env/dynamic/private';
-import { env as publicEnv } from '$env/dynamic/public';
 import { streamerProfile } from '$lib/config';
 import { sampleRequests, sampleSongs } from '$lib/sample-data';
+import { getBackendMode, getSupabaseConfig } from '$lib/server/env';
 import {
   type CatalogStats,
   requestStatusOptions,
   songStatusOptions,
   type AdminDashboardData,
-  type BackendMode,
   type PublicCatalog,
   type RequestStatus,
   type Song,
@@ -62,17 +60,14 @@ const parseRequestStatus = (status: string): RequestStatus => {
   throw new Error(`Invalid request status from database: ${status}`);
 };
 
-const getBackendMode = (): BackendMode =>
-  publicEnv.PUBLIC_SUPABASE_URL && publicEnv.PUBLIC_SUPABASE_ANON_KEY && privateEnv.SUPABASE_SERVICE_ROLE_KEY
-    ? 'supabase'
-    : 'memory';
-
 const getSupabaseAdmin = () => {
   if (getBackendMode() !== 'supabase') {
     return null;
   }
 
-  return createClient(publicEnv.PUBLIC_SUPABASE_URL!, privateEnv.SUPABASE_SERVICE_ROLE_KEY!, {
+  const supabaseConfig = getSupabaseConfig();
+
+  return createClient(supabaseConfig.url, supabaseConfig.serviceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false

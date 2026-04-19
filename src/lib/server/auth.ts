@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { env as privateEnv } from '$env/dynamic/private';
-import { env as publicEnv } from '$env/dynamic/public';
+import { getSupabaseConfig, hasSupabaseConfig } from '$lib/server/env';
 import { createClient } from '@supabase/supabase-js';
 import type { Cookies } from '@sveltejs/kit';
 
@@ -44,15 +44,8 @@ const buildCookieValue = () => {
   return `${payload}.${signature}`;
 };
 
-const hasSupabaseAuth = () =>
-  Boolean(
-    publicEnv.PUBLIC_SUPABASE_URL &&
-      publicEnv.PUBLIC_SUPABASE_ANON_KEY &&
-      privateEnv.SUPABASE_SERVICE_ROLE_KEY
-  );
-
 export const getAuthMode = (): AuthMode => {
-  if (hasSupabaseAuth()) {
+  if (hasSupabaseConfig()) {
     return 'supabase';
   }
 
@@ -141,7 +134,7 @@ export const loginAdmin = async ({
     };
   }
 
-  if (hasSupabaseAuth()) {
+  if (hasSupabaseConfig()) {
     const adminEmail = getAdminEmail().toLowerCase();
 
     if (normalizedEmail !== adminEmail) {
@@ -151,7 +144,8 @@ export const loginAdmin = async ({
       };
     }
 
-    const client = createClient(publicEnv.PUBLIC_SUPABASE_URL!, publicEnv.PUBLIC_SUPABASE_ANON_KEY!, {
+    const supabaseConfig = getSupabaseConfig();
+    const client = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false
